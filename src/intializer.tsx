@@ -13,7 +13,6 @@ type Application = {
     yodleeToken?: string;
 };
 
-
 function Error(errorMessage?: any) {
     return {
         applicationKind: ApplicationKind.ERROR,
@@ -24,7 +23,7 @@ function Error(errorMessage?: any) {
 const createApplication = (urlParams: Record<string, any>): Application => {
    
     if (!urlParams || Object.keys(urlParams).length === 0) {
-        return Error("No parameters provided.");
+        return Error();
     }
 
     if (!("source_id" in urlParams)) {
@@ -53,6 +52,7 @@ const createApplication = (urlParams: Record<string, any>): Application => {
 
 export const ApplicationInitializer: React.FC = () => {
     const [application, setApplication] = useState<Application | null>(null);
+    const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -70,6 +70,7 @@ export const ApplicationInitializer: React.FC = () => {
         if (!application || !application.yodleeToken) {
             return Error();
         }
+        setIsOpen(true);
         window.fastlink.open(
             {
                 fastLinkURL: 'https://fl4.preprod.yodlee.com/authenticate/USDevexPreProd3-146/fastlink?channelAppName=usdevexpreprod3',
@@ -91,7 +92,7 @@ export const ApplicationInitializer: React.FC = () => {
             ) : (
                 <div id="container-fastlink">
                     <div style={{ textAlign: "center" }}>
-                        <input type="submit" id="btn-fastlink" value="Link an Account" onClick={openWidget} />
+                        {!isOpen &&<input type="submit" id="btn-fastlink" value="Link an Account" onClick={openWidget} />}
                     </div>
                 </div>
             )}
